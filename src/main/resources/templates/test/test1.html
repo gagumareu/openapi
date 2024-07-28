@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>SEOUL OPEN API TEST</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    <h1>HELLO</h1>
+
+    <ul class="ulList">
+        
+    </ul>
+
+    <script>
+        const apiUrl = 'http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulLibraryBookSearchInfo/1/1000'
+
+        async function fetchData() {
+
+            try{
+
+                const response = await fetch(apiUrl);
+
+                if(!response.ok){
+                    throw new Error("HTTP error !:  " + response.status);
+                }
+
+                const data = await response.json();
+
+                const items = data.SeoulLibraryBookSearchInfo.row
+
+                console.log("--------------")
+                console.log(data);
+                console.log(items.length);
+
+                getList(items)
+
+            } catch(error){
+                console.error('Error fetching data : ', error)
+            }
+
+
+        } 
+
+        fetchData()
+
+
+        function getList(data){
+
+            let $ulList = document.querySelector('.ulList')
+
+            console.log(data)
+
+            let str = "";
+
+            if(data && data.length > 0) {
+
+                console.log("============")
+
+
+                for(const dto of data){
+
+                    str += `<li>${dto.TITLE}</li>`;
+                    str += `<li>${dto.AUTHOR}</li>`;
+                    str += `<li></li>`;
+
+                }
+
+            }
+
+            // $ulList.innerHTML = str
+
+        }
+
+    </script>
+</body>
+</html>

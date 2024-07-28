@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    
+   <div>
+        <label>
+            <input type="text" name="keyword" class="keyword" placeholder="keyword">
+        </label>
+        <button type="button" class="button">click</button>
+   </div>
+</body>
+
+ <script>
+
+    let $indexStart = 1
+    let $indexEnd = 20
+    let $total = 100
+
+    const $keyword = document.querySelector('.keyword')
+    const $button = document.querySelector('.button')
+
+    async function getLibraryData(keyword){
+
+        for(let $indexStart = 1; $indexStart <= $total; $indexEnd *= 2){
+
+            let list = []
+
+            // console.log("=====================")
+
+            console.log(keyword)
+
+            console.log("start: " + $indexStart)
+            console.log("end: " + $indexEnd)
+
+            const apiUrl = `http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulLibraryBookSearchInfo/${$indexStart}/${$indexEnd}/`
+
+            const response = await fetch(apiUrl)
+
+            const data = await response.json()             
+
+            console.log(data)
+
+            const items = data.SeoulLibraryBookSearchInfo.row
+
+            console.log(items)
+
+            
+            // const result1 = items.filter(item => item.includes(keyword))
+            const result1 = items.filter(item => item['TITLE'] === keyword)
+            // const result2 = items.filter(item => keyword.some(word => item.includes(word)));
+            
+            console.log("result: " + JSON.stringify(result1))
+            // console.log("result: " + JSON.stringify(result2))
+
+            console.log("**************************")
+
+            $indexStart += $indexEnd
+        }
+
+
+    }
+
+    // getLibraryData()
+
+    $button.addEventListener('click', function(){
+        
+        console.log("--------------------")
+        console.log($keyword.value)
+
+        getLibraryData($keyword.value)
+
+    })
+
+
+
+
+
+
+   
+ </script>
+</html>
+ 
