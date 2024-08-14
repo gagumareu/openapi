@@ -9,6 +9,9 @@
 <body>
     
    <div>
+        <div>
+            <h2>서울 도서관 소장자료 현황 정보</h2>
+        </div>
         <label>
             <input type="text" name="keyword" class="keyword" placeholder="keyword">
         </label>
@@ -18,18 +21,19 @@
 
  <script>
 
-    let $indexStart = 1
-    let $indexEnd = 1000
+    let $indexStart = 530001
+    let $indexEnd = 531000
     let $total = ''
 
     const $keyword = document.querySelector('.keyword')
     const $button = document.querySelector('.button')
 
     const apiUrl = `http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulLibraryBookSearchInfo/${$indexStart}/${$indexEnd}/`
+    const defualtUrl = 'http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulLibraryBookSearchInfo/1/1000/'
 
     async function getTotalCount(){
 
-        const response = await fetch(apiUrl)
+        const response = await fetch(defualtUrl)
 
         const data = await response.json()
 
@@ -37,7 +41,7 @@
 
         $total = total_Count
 
-        console.log($total)
+        console.log("total length: " + $total)
 
     }
 
@@ -63,19 +67,33 @@
     
     async function getLibraryDataByKeywordBeta(keyword){
 
-        let found = false;
+        console.log("get into librarydataFunction -----")
+        console.log("keyword: " + keyword)
 
 
-        for(let $indexStart = 1; $indexStart <= $total; $indexEnd += 1000){
+        let start = 1
+        let end = 1000
+
+        const list = []
+
+
+        // for(let $indexStart; $indexStart <= $total; $indexEnd += 1000){
+        // for(let start = 530001; start <= $total; end += 1000){
+        while(start <= $total){
 
             console.log("=======================")
 
             console.log(keyword)
 
-            console.log("start: " + $indexStart)
-            console.log("end: " + $indexEnd)
+            console.log("start: " + start)
+            console.log("end: " + end)
+            // console.log("start: " + $indexStart)
+            // console.log("end: " + $indexEnd)
 
-            const response = await fetch(apiUrl)
+            const apiUrl2 = `http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulLibraryBookSearchInfo/${start}/${end}/`
+
+
+            const response = await fetch(apiUrl2)
 
             const data = await response.json()             
 
@@ -86,13 +104,23 @@
             // const result1 = items.filter(item => item.includes(keyword))
             // const result2 = items.filter(item => keyword.some(word => item.includes(word)));
 
+            const result = items.filter(item => item['TITLE'] === keyword)
+            console.log("result: " + JSON.stringify(result))
 
-            const result1 = items.filter(item => item['TITLE'] === keyword)
-            console.log("result: " + JSON.stringify(result1))
+            if(result.length == 0) console.log("list length is zero")
 
-            $indexStart += 1000
+            list.concat(result)
+
+            if(result != '' & result != null)break;
+
+            start += 1000
+            end += 1000
 
         }
+
+        console.log(list)
+
+        return list;
 
     }
 

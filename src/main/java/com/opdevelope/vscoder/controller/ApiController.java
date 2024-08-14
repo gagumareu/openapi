@@ -28,6 +28,11 @@ public class ApiController {
     public String getMethodName2() {
         return "/library/library2";
     }
+
+    @GetMapping("/library3")
+    public String getMethodName3() {
+        return "/library/library3";
+    }
     
     
 }

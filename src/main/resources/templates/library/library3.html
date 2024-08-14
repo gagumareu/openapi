@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+
+    <div>
+        <h2>서울공공도서관 현황정보</h2>
+    </div>
+    <div>
+
+    </div>
+    
+</body>
+<script>
+
+    console.log("hello")
+
+    const seoulLibraryList = []
+
+    async function getSeoulPublicLibrary(){
+
+        const apiUrl = "http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulPublicLibraryInfo/1/300/"
+
+        const response = await fetch(apiUrl)
+
+        const data = await response.json()
+
+        const items = data.SeoulPublicLibraryInfo.row
+
+        console.log(data)
+
+        console.log(items)
+
+        console.log(items.length)
+
+        seoulLibraryList.push(items)
+
+        console.log(seoulLibraryList)
+    
+        return seoulLibraryList;
+
+    }
+
+    getSeoulPublicLibrary()    
+
+
+</script>
+</html>
