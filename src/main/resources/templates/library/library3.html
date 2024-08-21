@@ -5,32 +5,108 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Page Title</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=hmecoefot7"></script>
+
 </head>
+
 <body>
 
     <div>
         <h2>서울공공도서관 현황정보</h2>
     </div>
     <div>
+        <div id="map" style="width:100%;height:400px;"></div>
+        <script>
 
+
+            var mapOptions = {
+                center: new naver.maps.LatLng(37.47153836, 127.096582),
+                zoom: 13
+            };
+
+            // var map = new naver.maps.Map('map', {
+            //     center: new naver.maps.LatLng(37.47153836, 127.096582),
+            //     zoom: 15
+            // }); // id와 option
+
+            var map = new naver.maps.Map('map', mapOptions);
+
+            const libraryMaps = []
+
+            async function libryInfo(){
+
+                console.log("------ libryInfo -------")
+
+                const apiUrl = "http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulPublicLibraryInfo/1/5/"
+
+                const response = await fetch(apiUrl)
+
+                const data = await response.json()
+
+                const items = data.SeoulPublicLibraryInfo.row
+
+                items.forEach(element => {
+                    libraryMaps.push({ libry_name: element.LBRRY_NAME, libry_xcnts: element.XCNTS, libry_ydnts: element.YDNTS})
+
+                    const libryName = element.LBRRY_NAME;
+
+                    var contentString = [
+                        `<div class="librry">`,
+                            `도서관명: ${libryName}<br />`,
+                            `<a href="${element.HMPG_URL}">${element.HMPG_URL}</a><br />`,
+                       `</div>`,        
+                    ].join('');
+
+                    var infowindow = new naver.maps.InfoWindow({
+                        content: contentString
+                    });
+                   
+                    var marker = new naver.maps.Marker({
+                        position: new naver.maps.LatLng(element.XCNTS, element.YDNTS),
+                        map: map
+                    });
+
+                    naver.maps.Event.addListener(marker, "click", function(e) {
+                        if (infowindow.getMap()) {
+                            infowindow.close();
+                        } else {
+                            infowindow.open(map, marker);
+                        }
+                    });
+
+                    infowindow.open(map, marker);
+
+                });
+
+                console.log(libraryMaps)
+
+                return libraryMaps;
+            }
+
+            libryInfo()
+       
+           
+
+           
+        </script>
     </div>
-    
+   
 </body>
 <script>
-
-    console.log("hello")
 
     const seoulLibraryList = []
 
     async function getSeoulPublicLibrary(){
 
-        const apiUrl = "http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulPublicLibraryInfo/1/300/"
+        const apiUrl = "http://openapi.seoul.go.kr:8088/4c61585755756465383679744d564c/json/SeoulPublicLibraryInfo/1/5/"
 
         const response = await fetch(apiUrl)
 
         const data = await response.json()
 
         const items = data.SeoulPublicLibraryInfo.row
+
+        console.log("-------- getSeoulPublicLibry ---------")
 
         console.log(data)
 
@@ -41,13 +117,14 @@
         seoulLibraryList.push(items)
 
         console.log(seoulLibraryList)
-    
+   
         return seoulLibraryList;
 
     }
 
     getSeoulPublicLibrary()    
 
+   
 
 </script>
 </html>
